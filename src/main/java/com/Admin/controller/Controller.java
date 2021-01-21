@@ -25,8 +25,6 @@ public class Controller {
         return new ResponseEntity<List<Admin>>(service.getAllAdmins(), HttpStatus.OK);
     }
 
- 
-
     @GetMapping(value = "/getadminbyid/{id}")
     public ResponseEntity<Admin> getRequestorById(@PathVariable("id") int id) {
         if (service.getAdminById(id) != null) {

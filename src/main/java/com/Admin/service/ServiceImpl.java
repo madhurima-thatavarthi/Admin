@@ -1,9 +1,11 @@
 package com.Admin.service;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.RestTemplate;
 
 import com.Admin.model.Admin;
 import com.Admin.repository.Repository;
@@ -12,6 +14,9 @@ public class ServiceImpl implements Service{
 
 	@Autowired
 	Repository repository;
+	
+	@Autowired
+	RestTemplate restTemplate;
 	
 	@Override
 	public List<Admin> getAllAdmins() {
@@ -32,7 +37,8 @@ public class ServiceImpl implements Service{
 
 	@Override
 	public Admin createAdmin(Admin admin) {
-		return repository.save(admin);
+		URI uri = URI.create("http://localhost:/9093/createadmin");
+		return repository.save(this.restTemplate.getForObject(uri, Admin.class));
 	}
 
 	@Override
