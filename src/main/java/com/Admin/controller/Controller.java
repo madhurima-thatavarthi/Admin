@@ -1,6 +1,8 @@
 package com.Admin.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.Admin.exception.NoContentException;
 import com.Admin.model.Admin;
 import com.Admin.model.Donor;
 import com.Admin.service.Service;
@@ -28,12 +32,8 @@ public class Controller {
 	}
 
 	@GetMapping(value = "/getadminbyid/{id}")
-	public ResponseEntity<Admin> getRequestorById(@PathVariable("id") int id) {
-		if (service.getAdminById(id) != null) {
-			return new ResponseEntity<Admin>(service.getAdminById(id), HttpStatus.OK);
-		} else {
-			return new ResponseEntity<Admin>(HttpStatus.NO_CONTENT);
-		}
+	public ResponseEntity<Admin> getRequestorById(@PathVariable("id") int id) throws NoContentException{
+		return new ResponseEntity<Admin>(service.getAdminById(id), HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/createadmin")
@@ -52,12 +52,20 @@ public class Controller {
 	}
 
 	@GetMapping(value = "/approverequestor/{id}")
-	public ResponseEntity<Requestor> approveRequestor(@PathVariable("id") int id) {
-		return new ResponseEntity<Requestor>(service.approveRequestor(id), HttpStatus.OK);
+	public ResponseEntity<Requestor> approveRequestor(@PathVariable("id") int id) throws NoContentException {
+		try {
+			return new ResponseEntity<Requestor>(service.approveRequestor(id), HttpStatus.OK);
+		} catch (NoSuchElementException ex) {
+			throw new NoContentException(ex.getMessage());
+		}
 	}
 
 	@GetMapping(value = "/approvedonor/{id}")
-	public ResponseEntity<Donor> approveDonor(@PathVariable("id") int id) {
-		return new ResponseEntity<Donor>(service.approveDonor(id), HttpStatus.OK);
+	public ResponseEntity<Donor> approveDonor(@PathVariable("id") int id) throws NoContentException {
+		try {
+			return new ResponseEntity<Donor>(service.approveDonor(id), HttpStatus.OK);
+		} catch (NoSuchElementException ex) {
+			throw new NoContentException(ex.getMessage());
+		}
 	}
 }

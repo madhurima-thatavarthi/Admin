@@ -2,13 +2,17 @@ package com.Admin.service;
 
 import java.net.URI;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
+
+import com.Admin.exception.NoContentException;
 import com.Admin.model.Admin;
 import com.Admin.model.Donor;
 import com.Admin.model.Requestor;
 import com.Admin.repository.Repository;
+
 
 @org.springframework.stereotype.Service("service")
 public class ServiceImpl implements Service {
@@ -26,14 +30,14 @@ public class ServiceImpl implements Service {
 	}
 
 	@Override
-	public Admin getAdminById(int id) {
+	public Admin getAdminById(int id) throws NoContentException {
 		Optional<Admin> admin = repository.findById(id);
 		if (admin.isPresent()) {
 			return admin.get();
 		} else {
-			return null;
+			
+			throw new NoContentException("Data not found");
 		}
-
 	}
 
 	@Override
@@ -69,7 +73,16 @@ public class ServiceImpl implements Service {
 
 	@Override
 	public Admin createAdmin(Admin admin) {
-		return repository.save(admin);
+		URI uri = URI.create("http://localhost:9093/createadmin");
+		return repository.save(this.restTemplate.getForObject(uri, Admin.class));
+	}
+	
+	@Override
+	public Admin authenticateAdmin(Admin admin) throws NoSuchElementException {
+		List<Admin> requestors = repository.findAll();
+		System.out.println(admin.getUserName() + admin.getPassword());
+		return requestors.stream().filter(check -> check.getUserName().equals(admin.getUserName()))
+				.filter(check -> check.getPassword().equals(admin.getPassword())).findFirst().get();
 	}
 
 }

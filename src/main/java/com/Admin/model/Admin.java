@@ -24,16 +24,22 @@ public class Admin {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ADMIN_ID")
 	private int id;
-	
+
+	@Column(name = "userName", length = 20)
+	private String userName;
+
+	@Column(name = "password", length = 20)
+	private String password;
+
 	@Column(name = "ADMIN_NAME", length = 20)
 	private String name;
-	
+
 	@Column(name = "ADMIN_AGE")
 	private int age;
-	
+
 	@Column(name = "ADMIN_LOCATION", length = 10)
 	private String location;
-	
+
 	@Column(name = "BLOODBANK_NAME", length = 10)
 	private String bloodBankName;
 
